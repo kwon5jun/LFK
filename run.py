@@ -2,7 +2,7 @@ import subprocess
 import smtplib
 import os
 import datetime
-import tomli
+import tomllib
 from email.message import EmailMessage
 
 def buy(UID,UCNT):
@@ -68,7 +68,7 @@ def sand_mail(EMAIL_ADDR,EMAIL_PASSWORD,To_email,Sand_content):
 if __name__ == "__main__":
     try:
         with open(os.path.expanduser("~/.dhapi/credentials"), "rb") as f:
-            data = tomli.load(f)
+            data = tomllib.load(f)
 
         profile_data=data.get("Setting")
         FW_Email = profile_data.get("ForwardingEmail")
