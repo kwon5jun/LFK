@@ -7,9 +7,11 @@ from email.message import EmailMessage
 
 def buy(UID,UCNT):
     rt_out = ''
-    buycnt=' \'\''
+    buycnt=''
+    for _ in range(int(UCNT)):
+        buycnt += " ''"
     #구매 명령어 dhapi buy-lotto645 -y -p [사용자명(UID)] ''
-    cmd = 'dhapi buy-lotto645'+' -y -p '+ UID + str(buycnt)*int(UCNT)
+    cmd = f'dhapi buy-lotto645 -y -p {UID}{buycnt}'
     print(cmd)
     try:
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8')
@@ -25,7 +27,7 @@ def buy(UID,UCNT):
     rt_out += '\n'
     
     #예치금조회 dhapi show-balance -p [사용자명(UID)]
-    cmd = 'dhapi show-balance'+' -p '+ UID
+    cmd = f'dhapi show-balance -p {UID}'
     print(cmd)
     try:
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8')
