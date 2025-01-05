@@ -38,15 +38,19 @@ def buy(UID,UCNT,Fixed_numbers):
         print(f"buy command ERRER: {e}")
         return f"buy command ERRER: {e}"
     
-    Out_value = rt_out.split("\n")
-    Out_value = Out_value[Find_indexes_list(Out_value,"✅")[-1]:]
-    Return_value.append(Out_value[0])
-    
-    for _ex in ["A","B","C","D","E"]:
-        _ef = Find_indexes_list(Out_value,_ex)
-        if not _ef:
-            break
-        Return_value.append(Number_processing(Out_value[_ef[0]].replace(" ", "")))
+    try:
+        Out_value = rt_out.split("\n")
+        Out_value = Out_value[Find_indexes_list(Out_value,"✅")[-1]:]
+        Return_value.append(Out_value[0])
+        
+        for _ex in ["A","B","C","D","E"]:
+            _ef = Find_indexes_list(Out_value,_ex)
+            if not _ef:
+                break
+            Return_value.append(Number_processing(Out_value[_ef[0]].replace(" ", "")))
+    except Exception as e:
+        print(f"buy output ERRER: {e}")
+        return f"buy output ERRER: {e}"
 
     #예치금조회 dhapi show-balance -p [사용자명(UID)]
     cmd = f'dhapi show-balance -p {UID}'
@@ -63,13 +67,15 @@ def buy(UID,UCNT,Fixed_numbers):
     except Exception as e:
         print(f"balance command ERRER: {e}")
         return f"balance command ERRER: {e}"
-    
-    Out_value = rt_out.split("\n")
-    Out_value = Out_value[Find_indexes_list(Out_value,"✅")[-1]:]
-    Return_value.append(Out_value[0])
-    Return_value.append(Balance_processing(Out_value[4].replace(" ", "")))
-
-    Return_value = "\n".join(Return_value)
+    try:
+        Out_value = rt_out.split("\n")
+        Out_value = Out_value[Find_indexes_list(Out_value,"✅")[-1]:]
+        Return_value.append(Out_value[0])
+        Return_value.append(Balance_processing(Out_value[4].replace(" ", "")))
+        Return_value = "\n".join(Return_value)
+    except Exception as e:
+        print(f"balance output ERRER: {e}")
+        return f"balance output ERRER: {e}"
     
     return Return_value
 
