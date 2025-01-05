@@ -5,23 +5,23 @@ import datetime
 import tomllib
 from email.message import EmailMessage
 
-def buy(UID,UCNT,fixed_numbers):
+def buy(UID,UCNT,Fixed_numbers):
     rt_out = ''
-    buycnt=''
+    Select_number=''
 
-    if fixed_numbers is not None:
-        formatted_strings = [" " + ", ".join(map(str, sublist)) for sublist in fixed_numbers]
+    if Fixed_numbers is not None:
+        formatted_strings = [" " + ", ".join(map(str, sublist)) for sublist in Fixed_numbers]
 
         if len(formatted_strings) < UCNT:
             formatted_strings.extend([''] * (UCNT - len(formatted_strings)))
 
-        buycnt = " " + " ".join(f"'{string}'" for string in formatted_strings)
+        Select_number = " " + " ".join(f"'{string}'" for string in formatted_strings)
     else:
         for _ in range(UCNT):
-            buycnt += " ''"
+            Select_number += " ''"
 
     #구매 명령어 dhapi buy-lotto645 -y -p [사용자명(UID)] ''
-    cmd = f'dhapi buy-lotto645 -y -p {UID}{buycnt}'
+    cmd = f'dhapi buy-lotto645 -y -p {UID}{Select_number}'
     print(cmd)
     try:
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8')
@@ -92,9 +92,9 @@ if __name__ == "__main__":
             ID = profile_data.get("username")
             Email = profile_data.get("email")
             CNT = profile_data.get("buystat")
-            fixed_numbers = profile_data.get("fixed_numbers")
+            Fixed_numbers = profile_data.get("fixed_numbers")
             if int(CNT) > 0:
-                rt_out = buy(ID, int(CNT),fixed_numbers)
+                rt_out = buy(ID, int(CNT),Fixed_numbers)
                 print('결과값', rt_out)
                 sand_mail(FW_Email,FW_Passwd,Email, rt_out)
             else:
