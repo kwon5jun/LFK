@@ -9,7 +9,7 @@ def buy(UID,UCNT,Fixed_numbers):
     rt_out = ''
     Select_number=''
     if str(type(Fixed_numbers)) == "<class 'str'>":
-        Fixed_numbers = list(Fixed_numbers)
+        Fixed_numbers = eval(Fixed_numbers)
         
     if Fixed_numbers is not None:
         formatted_strings = [" " + ", ".join(map(str, sublist)) for sublist in Fixed_numbers]
