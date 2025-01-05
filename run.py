@@ -8,7 +8,9 @@ from email.message import EmailMessage
 def buy(UID,UCNT,Fixed_numbers):
     rt_out = ''
     Select_number=''
-
+    if str(type(Fixed_numbers)) == "<class 'str'>":
+        Fixed_numbers = list(Fixed_numbers)
+        
     if Fixed_numbers is not None:
         formatted_strings = [" " + ", ".join(map(str, sublist)) for sublist in Fixed_numbers]
 
@@ -79,7 +81,11 @@ if __name__ == "__main__":
     try:
         with open(os.path.expanduser("~/.dhapi/credentials"), "rb") as f:
             data = tomllib.load(f)
-
+    except Exception as e :
+        print(f"File open fail : {e}")
+        exit()
+        
+    try:
         profile_data=data.get("Setting")
         FW_Email = profile_data.get("ForwardingEmail")
         FW_Passwd = profile_data.get("ForwardingPassword")
@@ -93,10 +99,12 @@ if __name__ == "__main__":
             Email = profile_data.get("email")
             CNT = profile_data.get("buystat")
             Fixed_numbers = profile_data.get("fixed_numbers")
-            if int(CNT) > 0:
+            if 0 < int(CNT) <= 5:
                 rt_out = buy(ID, int(CNT),Fixed_numbers)
-                print('결과값', rt_out)
+                print("결과값", rt_out)
                 sand_mail(FW_Email,FW_Passwd,Email, rt_out)
+            elif int(CNT) > 5:
+                print("5장 이상 구매불가")
             else:
                 print("미구매")
     except Exception as e:
