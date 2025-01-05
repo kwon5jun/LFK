@@ -8,6 +8,8 @@ from email.message import EmailMessage
 def buy(UID,UCNT,Fixed_numbers):
     Return_value=[]
     Select_number=''
+    if not Fixed_numbers:
+        Fixed_numbers =[]
     if str(type(Fixed_numbers)) == "<class 'str'>":
         Fixed_numbers = eval(Fixed_numbers)
         
