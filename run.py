@@ -67,6 +67,7 @@ def buy(UID,UCNT,Fixed_numbers):
     except Exception as e:
         print(f"balance command ERRER: {e}")
         return f"balance command ERRER: {e}"
+    
     try:
         Out_value = rt_out.split("\n")
         Out_value = Out_value[Find_indexes_list(Out_value,"✅")[-1]:]
@@ -92,7 +93,6 @@ def Number_processing(text):
     return_text += f"번호4\t: {text[6]}\n"
     return_text += f"번호5\t: {text[7]}\n"
     return_text += f"번호6\t: {text[8]}\n"
-    #print(return_text)
     return return_text
 
 def Balance_processing(text):
@@ -102,7 +102,6 @@ def Balance_processing(text):
     return_text += f"예약구매금액\t: {text[3]}\n"
     return_text += f"구매불가금액\t: {text[4]}\n"
     return_text += f"이번달누적금액\t: {text[5]}\n"
-    #print(return_text)
     return return_text
 
 def sand_mail(EMAIL_ADDR,EMAIL_PASSWORD,To_email,Sand_content):
