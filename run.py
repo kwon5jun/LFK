@@ -29,12 +29,14 @@ def buy(UID,UCNT,Fixed_numbers):
     print(cmd)
     rt_out = ""
     try:
-        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8')
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding='utf-8')
         while True:
             output = process.stdout.readline()
             if output == '' and process.poll() is not None:
                 break
             if output:
+                if "RuntimeError" in output:
+                    return f"{output}"
                 rt_out = rt_out + '\n' + output.strip()
     except Exception as e:
         print(f"buy command ERRER: {e}")
@@ -59,12 +61,14 @@ def buy(UID,UCNT,Fixed_numbers):
     print(cmd)
     rt_out = ""
     try:
-        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8')
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding='utf-8')
         while True:
             output = process.stdout.readline()
             if output == '' and process.poll() is not None:
                 break
             if output:
+                if "RuntimeError" in output:
+                    return f"{output}"
                 rt_out = rt_out + '\n' + output.strip()
     except Exception as e:
         print(f"balance command ERRER: {e}")
@@ -99,7 +103,7 @@ def Number_processing(text):
 
 def Balance_processing(text):
     text = text.split("│")
-    return_text = f"총예치금\t: {text[1]}\n"
+    return_text = f"총예치금액\t: {text[1]}\n"
     return_text += f"구매가능금액\t: {text[2]}\n"
     return_text += f"예약구매금액\t: {text[3]}\n"
     return_text += f"구매불가금액\t: {text[4]}\n"
@@ -153,7 +157,7 @@ if __name__ == "__main__":
             if 0 < int(CNT) <= 5:
                 rt_out = buy(ID, int(CNT),Fixed_numbers)
                 print("결과값", rt_out)
-                #sand_mail(FW_Email,FW_Passwd,Email, rt_out)
+                sand_mail(FW_Email,FW_Passwd,Email, rt_out)
             elif int(CNT) > 5:
                 print("5장 이상 구매불가")
             else:
