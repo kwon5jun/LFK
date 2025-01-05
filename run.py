@@ -6,7 +6,7 @@ import tomllib
 from email.message import EmailMessage
 
 def buy(UID,UCNT,Fixed_numbers):
-    rt_out = ''
+    Return_value=[]
     Select_number=''
     if str(type(Fixed_numbers)) == "<class 'str'>":
         Fixed_numbers = eval(Fixed_numbers)
@@ -25,6 +25,7 @@ def buy(UID,UCNT,Fixed_numbers):
     #구매 명령어 dhapi buy-lotto645 -y -p [사용자명(UID)] ''
     cmd = f'dhapi buy-lotto645 -y -p {UID}{Select_number}'
     print(cmd)
+    rt_out = ""
     try:
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8')
         while True:
@@ -36,11 +37,21 @@ def buy(UID,UCNT,Fixed_numbers):
     except Exception as e:
         print(f"buy command ERRER: {e}")
         return f"buy command ERRER: {e}"
-    rt_out += '\n'
     
+    Out_value = rt_out.split("\n")
+    Out_value = Out_value[Find_indexes_list(Out_value,"✅")[-1]:]
+    Return_value.append(Out_value[0])
+    
+    for _ex in ["A","B","C","D","E"]:
+        _ef = Find_indexes_list(Out_value,_ex)
+        if not _ef:
+            break
+        Return_value.append(Number_processing(Out_value[_ef[0]].replace(" ", "")))
+
     #예치금조회 dhapi show-balance -p [사용자명(UID)]
     cmd = f'dhapi show-balance -p {UID}'
     print(cmd)
+    rt_out = ""
     try:
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8')
         while True:
@@ -53,7 +64,40 @@ def buy(UID,UCNT,Fixed_numbers):
         print(f"balance command ERRER: {e}")
         return f"balance command ERRER: {e}"
     
-    return rt_out
+    Out_value = rt_out.split("\n")
+    Out_value = Out_value[Find_indexes_list(Out_value,"✅")[-1]:]
+    Return_value.append(Out_value[0])
+    Return_value.append(Balance_processing(Out_value[4].replace(" ", "")))
+
+    Return_value = "\n".join(Return_value)
+    
+    return Return_value
+
+def Find_indexes_list(lst, substring):
+    return [index for index, item in enumerate(lst) if substring in item]
+
+def Number_processing(text):
+    text = text.split("│")
+    return_text = f"슬롯\t: {text[1]}\n"
+    return_text += f"Mode\t: {text[2]}\n"
+    return_text += f"번호1\t: {text[3]}\n"
+    return_text += f"번호2\t: {text[4]}\n"
+    return_text += f"번호3\t: {text[5]}\n"
+    return_text += f"번호4\t: {text[6]}\n"
+    return_text += f"번호5\t: {text[7]}\n"
+    return_text += f"번호6\t: {text[8]}\n"
+    #print(return_text)
+    return return_text
+
+def Balance_processing(text):
+    text = text.split("│")
+    return_text = f"총예치금\t: {text[1]}\n"
+    return_text += f"구매가능금액\t: {text[2]}\n"
+    return_text += f"예약구매금액\t: {text[3]}\n"
+    return_text += f"구매불가금액\t: {text[4]}\n"
+    return_text += f"이번달누적금액\t: {text[5]}\n"
+    #print(return_text)
+    return return_text
 
 def sand_mail(EMAIL_ADDR,EMAIL_PASSWORD,To_email,Sand_content):
     SMTP_SERVER = 'smtp.gmail.com'
@@ -102,7 +146,7 @@ if __name__ == "__main__":
             if 0 < int(CNT) <= 5:
                 rt_out = buy(ID, int(CNT),Fixed_numbers)
                 print("결과값", rt_out)
-                sand_mail(FW_Email,FW_Passwd,Email, rt_out)
+                #sand_mail(FW_Email,FW_Passwd,Email, rt_out)
             elif int(CNT) > 5:
                 print("5장 이상 구매불가")
             else:
