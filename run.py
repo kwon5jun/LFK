@@ -3,13 +3,19 @@ import smtplib
 import os
 import datetime
 import tomllib
+import random
 from email.message import EmailMessage
+
+def generate_lotto_numbers():
+    return f" '{', '.join(map(str, sorted(random.sample(range(1, 46), 6))))}'"
 
 def buy(UID,UCNT,Fixed_numbers):
     Return_value=[]
     Select_number=''
+    
     if not Fixed_numbers:
         Fixed_numbers =[]
+        
     if str(type(Fixed_numbers)) == "<class 'str'>":
         Fixed_numbers = eval(Fixed_numbers)
         
@@ -22,7 +28,7 @@ def buy(UID,UCNT,Fixed_numbers):
         Select_number = " " + " ".join(f"'{string}'" for string in formatted_strings)
     else:
         for _ in range(UCNT):
-            Select_number += " ''"
+            Select_number += generate_lotto_numbers()
 
     #구매 명령어 dhapi buy-lotto645 -y -p [사용자명(UID)] ''
     cmd = f'dhapi buy-lotto645 -y -p {UID}{Select_number}'
