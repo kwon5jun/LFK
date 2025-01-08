@@ -69,7 +69,7 @@ def buy(UID,UCNT,Fixed_numbers):
             _ef = Find_indexes_list(Out_value,_ex)
             if not _ef:
                 break
-            Return_value.append(Number_processing(Out_value[_ef[0]].replace(" ", "")))
+            Return_value.append(f'{Number_processing(Out_value[_ef[0]].replace(" ", ""))}\n')
     except Exception as e:
         logging.error(f"buy output ERRER: {e}")
         return f"buy output ERRER: {e}"
@@ -95,7 +95,7 @@ def buy(UID,UCNT,Fixed_numbers):
     try:
         Out_value = rt_out.split("\n")
         Out_value = Out_value[Find_indexes_list(Out_value,"✅")[-1]:]
-        Return_value.append(Out_value[0])
+        Return_value.append(f'{Out_value[0]}\n')
         Return_value.append(Balance_processing(Out_value[4].replace(" ", "")))
         Return_value = "\n".join(Return_value)
     except Exception as e:
@@ -107,26 +107,17 @@ def buy(UID,UCNT,Fixed_numbers):
 def Find_indexes_list(lst, substring):
     return [index for index, item in enumerate(lst) if substring in item]
 
-def Number_processing(text):
+def process_fields(text, labels):
     text = text.split("│")
-    return_text = f"슬롯\t: {text[1]}\n"
-    return_text += f"Mode\t: {text[2]}\n"
-    return_text += f"번호1\t: {text[3]}\n"
-    return_text += f"번호2\t: {text[4]}\n"
-    return_text += f"번호3\t: {text[5]}\n"
-    return_text += f"번호4\t: {text[6]}\n"
-    return_text += f"번호5\t: {text[7]}\n"
-    return_text += f"번호6\t: {text[8]}\n"
-    return return_text
+    return "\n".join(f"{label}\t: {value}" for label, value in zip(labels, text[1:]))
+
+def Number_processing(text):
+    labels = ["슬롯", "Mode", "번호1", "번호2", "번호3", "번호4", "번호5", "번호6"]
+    return process_fields(text, labels)
 
 def Balance_processing(text):
-    text = text.split("│")
-    return_text = f"총예치금액\t: {text[1]}\n"
-    return_text += f"구매가능금액\t: {text[2]}\n"
-    return_text += f"예약구매금액\t: {text[3]}\n"
-    return_text += f"구매불가금액\t: {text[4]}\n"
-    return_text += f"이번달누적금액\t: {text[5]}\n"
-    return return_text
+    labels = ["총예치금액", "구매가능금액", "예약구매금액", "구매불가금액", "이번달누적금액"]
+    return process_fields(text, labels)
 
 def sand_mail(EMAIL_ADDR,EMAIL_PASSWORD,To_email,Sand_content):
     SMTP_SERVER = 'smtp.gmail.com'
