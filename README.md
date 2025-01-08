@@ -3,8 +3,10 @@
 
 https://github.com/roeniss/dhlottery-api
 
-~/.dhapi/ 위치에 credentials가 존재해야하며.
+
+~/.dhapi/ 위치에 credentials가 존재해야하며,
 
 credentials 예시와 같이 내용에 입력되어야합니다.
 
-Setting값에 전송한 구글계정이 필요하며, 구글계정에서 smtp설정이 필요합니다.
+Setting값에 전송한 구글계정이 필요하며, 구글계정에서 smtp설정 및 앱 비밀번호 설정이 필요합니다.
+
