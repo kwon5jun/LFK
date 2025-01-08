@@ -4,7 +4,18 @@ import os
 import datetime
 import tomllib
 import random
+import logging
 from email.message import EmailMessage
+
+log_dir = "log" # 해당파일 아래 log폴더 생성하여 로그파일 기록
+os.makedirs(log_dir, exist_ok=True)
+log_file = os.path.join(log_dir, f"lotto_{datetime.datetime.now().strftime('%Y-%m-%d')}.log")
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
+                    handlers=[
+                        logging.FileHandler(log_file, mode='a'),
+                        logging.StreamHandler()  # 콘솔 출력 추가
+                    ])
 
 def generate_lotto_numbers():
     return f" '{', '.join(map(str, sorted(random.sample(range(1, 46), 6))))}'"
@@ -29,10 +40,11 @@ def buy(UID,UCNT,Fixed_numbers):
     else:
         for _ in range(UCNT):
             Select_number += generate_lotto_numbers()
-
+            #Select_number += " ''" #자동으로 원할경우
+            
     #구매 명령어 dhapi buy-lotto645 -y -p [사용자명(UID)] ''
     cmd = f'dhapi buy-lotto645 -y -p {UID}{Select_number}'
-    print(cmd)
+    logging.info(f"command: {cmd}")
     rt_out = ""
     try:
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding='utf-8')
@@ -45,7 +57,7 @@ def buy(UID,UCNT,Fixed_numbers):
                     return f"{output}"
                 rt_out = rt_out + '\n' + output.strip()
     except Exception as e:
-        print(f"buy command ERRER: {e}")
+        logging.error(f"buy command ERRER: {e}")
         return f"buy command ERRER: {e}"
     
     try:
@@ -59,12 +71,12 @@ def buy(UID,UCNT,Fixed_numbers):
                 break
             Return_value.append(Number_processing(Out_value[_ef[0]].replace(" ", "")))
     except Exception as e:
-        print(f"buy output ERRER: {e}")
+        logging.error(f"buy output ERRER: {e}")
         return f"buy output ERRER: {e}"
 
     #예치금조회 dhapi show-balance -p [사용자명(UID)]
     cmd = f'dhapi show-balance -p {UID}'
-    print(cmd)
+    logging.info(f"command: {cmd}")
     rt_out = ""
     try:
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding='utf-8')
@@ -77,7 +89,7 @@ def buy(UID,UCNT,Fixed_numbers):
                     return f"{output}"
                 rt_out = rt_out + '\n' + output.strip()
     except Exception as e:
-        print(f"balance command ERRER: {e}")
+        logging.error(f"balance command ERRER: {e}")
         return f"balance command ERRER: {e}"
     
     try:
@@ -87,7 +99,7 @@ def buy(UID,UCNT,Fixed_numbers):
         Return_value.append(Balance_processing(Out_value[4].replace(" ", "")))
         Return_value = "\n".join(Return_value)
     except Exception as e:
-        print(f"balance output ERRER: {e}")
+        logging.error(f"balance output ERRER: {e}")
         return f"balance output ERRER: {e}"
     
     return Return_value
@@ -135,7 +147,7 @@ def sand_mail(EMAIL_ADDR,EMAIL_PASSWORD,To_email,Sand_content):
         smtp.send_message(message)
         smtp.quit()
     except Exception as e:
-        print(f"Email sending ERROR: {e}")
+        logging.error(f"Email sending ERROR: {e}")
 
 
 if __name__ == "__main__":
@@ -143,7 +155,7 @@ if __name__ == "__main__":
         with open(os.path.expanduser("~/.dhapi/credentials"), "rb") as f:
             data = tomllib.load(f)
     except Exception as e :
-        print(f"File open fail : {e}")
+        logging.error(f"File open fail : {e}")
         exit()
         
     try:
@@ -155,18 +167,18 @@ if __name__ == "__main__":
             if profile_name == "Setting":
                 continue
             profile_data = data.get(profile_name)
-            print(profile_data.get("name")+" 사용자")
+            logging.info(profile_data.get("name")+" 사용자")
             ID = profile_data.get("username")
             Email = profile_data.get("email")
             CNT = profile_data.get("buystat")
             Fixed_numbers = profile_data.get("fixed_numbers")
             if 0 < int(CNT) <= 5:
                 rt_out = buy(ID, int(CNT),Fixed_numbers)
-                print("결과값", rt_out)
+                logging.info("결과값", rt_out)
                 sand_mail(FW_Email,FW_Passwd,Email, rt_out)
             elif int(CNT) > 5:
-                print("5장 이상 구매불가")
+                logging.warning("5장 이상 구매불가")
             else:
-                print("미구매")
+                logging.info("미구매")
     except Exception as e:
-        print(f"RUNNING MAIN ERROR: {e}")
+        logging.error(f"RUNNING MAIN ERROR: {e}")
