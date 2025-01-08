@@ -24,23 +24,24 @@ def buy(UID,UCNT,Fixed_numbers):
     Return_value=[]
     Select_number=''
     
-    if not Fixed_numbers:
-        Fixed_numbers =[]
-        
-    if str(type(Fixed_numbers)) == "<class 'str'>":
-        Fixed_numbers = eval(Fixed_numbers)
-        
-    if Fixed_numbers is not None:
-        formatted_strings = [" " + ", ".join(map(str, sublist)) for sublist in Fixed_numbers]
+    try:
+        if str(type(Fixed_numbers)) == "<class 'str'>":
+            Fixed_numbers = eval(Fixed_numbers)
+            
+        if len(Fixed_numbers) > 0:
+            formatted_strings = [" " + ", ".join(map(str, sublist)) for sublist in Fixed_numbers]
 
-        if len(formatted_strings) < UCNT:
-            formatted_strings.extend([''] * (UCNT - len(formatted_strings)))
+            if len(formatted_strings) < UCNT:
+                formatted_strings.extend([''] * (UCNT - len(formatted_strings)))
 
-        Select_number = " " + " ".join(f"'{string}'" for string in formatted_strings)
-    else:
-        for _ in range(UCNT):
-            Select_number += generate_lotto_numbers()
-            #Select_number += " ''" #자동으로 원할경우
+            Select_number = " " + " ".join(f"'{string}'" for string in formatted_strings)
+        else:
+            for _ in range(UCNT):
+                Select_number += generate_lotto_numbers()
+                #Select_number += " ''" #자동으로 원할경우
+    except Exception as e :
+        logging.error(f'Fixed_numbers error {e}')
+        return f'잘못된 Fixed_numbers 설정 값'
             
     #구매 명령어 dhapi buy-lotto645 -y -p [사용자명(UID)] ''
     cmd = f'dhapi buy-lotto645 -y -p {UID}{Select_number}'
