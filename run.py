@@ -96,7 +96,7 @@ def buy(UID,UCNT,Fixed_numbers):
     try:
         Out_value = rt_out.split("\n")
         Out_value = Out_value[Find_indexes_list(Out_value,"✅")[-1]:]
-        Return_value.append(f'{Out_value[0]}\n')
+        Return_value.append(Out_value[0])
         Return_value.append(Balance_processing(Out_value[4].replace(" ", "")))
         Return_value = "\n".join(Return_value)
     except Exception as e:
