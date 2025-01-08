@@ -165,7 +165,7 @@ if __name__ == "__main__":
             Fixed_numbers = profile_data.get("fixed_numbers")
             if 0 < int(CNT) <= 5:
                 rt_out = buy(ID, int(CNT),Fixed_numbers)
-                logging.info("결과값", rt_out)
+                logging.info(f"결과값 : {rt_out}")
                 sand_mail(FW_Email,FW_Passwd,Email, rt_out)
             elif int(CNT) > 5:
                 logging.warning("5장 이상 구매불가")
